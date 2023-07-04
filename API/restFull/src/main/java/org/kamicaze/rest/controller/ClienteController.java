@@ -3,12 +3,16 @@ package org.kamicaze.rest.controller;
 import org.kamicaze.domain.entity.Cliente;
 import org.kamicaze.domain.repository.Clientes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 @RequestMapping("")
@@ -53,5 +57,19 @@ public class ClienteController {
                     clientes.save(cliente);
                     return ResponseEntity.noContent().build();
                 }).orElseGet(()->ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("api/clientes")
+    @ResponseBody
+    public ResponseEntity getAll(Cliente filtro){
+        ExampleMatcher matcher = ExampleMatcher
+                                    .matching()
+                                    .withIgnoreCase()
+                                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example example = Example.of(filtro, matcher);
+        List <Cliente> lista = clientes.findAll(example);
+        return ResponseEntity.ok(lista);
+
     }
 }
