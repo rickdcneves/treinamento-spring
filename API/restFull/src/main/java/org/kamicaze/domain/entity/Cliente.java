@@ -1,5 +1,7 @@
 package org.kamicaze.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -16,6 +18,7 @@ public class Cliente {
     public Cliente(){
 
     }
+    @JsonIgnore
     @OneToMany (mappedBy = "cliente", fetch = FetchType.LAZY)
     private Set<Pedido> pedidos;
 
