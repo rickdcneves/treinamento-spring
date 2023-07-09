@@ -1,6 +1,7 @@
 package org.kamicaze.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import org.kamicaze.domain.emum.StatusPedido;
 import org.kamicaze.domain.entity.Cliente;
 import org.kamicaze.domain.entity.ItemPedido;
 import org.kamicaze.domain.entity.Pedido;
@@ -14,11 +15,11 @@ import org.kamicaze.rest.dto.ItemPedidoDTO;
 import org.kamicaze.rest.dto.PedidoDTO;
 import org.kamicaze.service.PedidoService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,11 +44,17 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
         List<ItemPedido> itemsPedido = converterItems(pedido, dto.getItems());
         repository.save(pedido);
         itemPedidoRepository.saveAll(itemsPedido);
         pedido.setItens(itemsPedido);
         return pedido;
+    }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return repository.findByIdFetchItens(id);
     }
 
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items){
@@ -69,4 +76,6 @@ public class PedidoServiceImpl implements PedidoService {
                     return itemPedido;
                 }).collect(Collectors.toList());
     }
+
+
 }

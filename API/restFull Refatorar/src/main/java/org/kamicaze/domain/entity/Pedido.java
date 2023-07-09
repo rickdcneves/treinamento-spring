@@ -1,10 +1,16 @@
 package org.kamicaze.domain.entity;
 
+import lombok.*;
+import org.kamicaze.domain.emum.StatusPedido;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "pedido")
 public class Pedido {
@@ -21,6 +27,9 @@ public class Pedido {
     @Column(name = "total", precision = 20, scale = 2)
     private BigDecimal total;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusPedido status;
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
 
