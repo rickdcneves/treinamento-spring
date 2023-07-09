@@ -10,11 +10,14 @@ import org.kamicaze.domain.repository.Clientes;
 import org.kamicaze.domain.repository.ItemsPedido;
 import org.kamicaze.domain.repository.Pedidos;
 import org.kamicaze.domain.repository.Produtos;
+import org.kamicaze.exception.PedidoNaoEncontradoException;
 import org.kamicaze.exception.RegraNegocioException;
 import org.kamicaze.rest.dto.ItemPedidoDTO;
 import org.kamicaze.rest.dto.PedidoDTO;
 import org.kamicaze.service.PedidoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -55,6 +58,15 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Optional<Pedido> obterPedidoCompleto(Integer id) {
         return repository.findByIdFetchItens(id);
+    }
+
+    @Override
+    public void actulizaStatus(Integer id, StatusPedido status) {
+        repository.findById(id)
+                .map(pedido -> {
+                        pedido.setStatus(status);
+                        return repository.save(pedido);
+                }).orElseThrow(() -> new PedidoNaoEncontradoException());
     }
 
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> items){
