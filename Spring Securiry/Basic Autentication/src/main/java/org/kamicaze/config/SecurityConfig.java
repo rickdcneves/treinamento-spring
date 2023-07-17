@@ -36,6 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/produtos/**")
                 .hasRole("USER")
                 .and()
-                .formLogin();
+                .httpBasic();
     }
 }
